@@ -1,7 +1,7 @@
 package event
 
 import (
-	pkgevent "github.com/16go/web-wasm/pkg/event"
+	"github.com/16go/web-wasm/pkg/z"
 	"syscall/js"
 )
 
@@ -16,7 +16,7 @@ const (
 )
 
 type msgEvent struct {
-	pkgevent.EventInterface
+	z.EventInterface
 }
 
 func NewMessageEvent(jv js.Value) msgEvent {

@@ -1,13 +1,9 @@
 package pkg
 
 import (
-	pkgws "github.com/16go/web-wasm/pkg/websocket"
-)
-
-type (
-	WebSocketApi = pkgws.Api
+	"github.com/16go/web-wasm/pkg/z"
 )
 
 type WebApi struct {
-	WebSocketApi
+	z.WebSocketInterface
 }

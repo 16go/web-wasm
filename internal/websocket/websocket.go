@@ -97,6 +97,7 @@ func (ep *endpoint) Send(data []byte) {
 
 func (ep *endpoint) close(extra ...any) {
 	ep.ws.Call("close", extra...)
+	ep.isClosed = true
 }
 
 func (ep *endpoint) Close() {
@@ -109,7 +110,7 @@ func (ep *endpoint) IsClosed() bool {
 
 func (ep *endpoint) CloseWithDetails(code int, reason string) {
 	errMap.checkCustomCode(code)
-	ep.close(close, code, reason)
+	ep.close(code, reason)
 }
 
 func (ep *endpoint) GetBytesReceived() int {
