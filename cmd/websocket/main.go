@@ -1,16 +1,18 @@
 package main
 
 import (
-	"github.com/16go/web-wasm/pkg"
-	"github.com/16go/web-wasm/pkg/websocket"
-	"syscall/js"
+	"fmt"
 )
 
 func main() {
-	pkg.ExportGlobalFn("Wasm_Foo", func(args ...js.Value) {
-		url := args[0].String()
-		websocket.NewEndpoint(url)
-	})
+	a := 0
+	b := 1
+	_ = b / a
+	fmt.Print("Hello from Go")
+	//pkg.ExportGlobalFn("Wasm_Foo", func(args ...js.Value) {
+	//	url := args[0].String()
+	//	websocket.NewEndpoint(url)
+	//})
 	//..
 	select {}
 }
