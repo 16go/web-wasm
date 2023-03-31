@@ -4,7 +4,7 @@ import (
 	"fmt"
 	//"github.com/16go/web-wasm/pkg"
 	//"github.com/16go/web-wasm/pkg/websocket"
-	//"syscall/js"
+	_ "syscall/js"
 )
 
 func main() {
