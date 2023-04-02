@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"github.com/16go/web-wasm/pkg/z"
 	"syscall/js"
 )
 
@@ -13,12 +12,4 @@ func ByteSliceToArrayBuffer(slice []byte) js.Value {
 	// Get the underlying ArrayBuffer object
 	buffer := array.Get("buffer")
 	return buffer
-}
-
-func ExportGlobalFn(name string, fn z.ExportedFn) {
-	expFn := js.FuncOf(func(this js.Value, args []js.Value) any {
-		fn(args...)
-		return nil
-	})
-	js.Global().Set(name, expFn)
 }

@@ -3,7 +3,7 @@
 package websocket
 
 import (
-	"fmt"
+	"github.com/16go/web-wasm/internal/event"
 	"github.com/16go/web-wasm/pkg"
 	"github.com/16go/web-wasm/pkg/z"
 	"sync/atomic"
@@ -46,48 +46,46 @@ func (WebSocketApi) NewEndpoint(url string, opts ...z.OptionInterface) z.WebSock
 	for _, opt := range opts {
 		opt(ep)
 	}
-	fmt.Printf("foo %v", js.Global().Get("Websocket"))
-
 	// Open a new connection to the given endpoint.
-	//ep.ws = js.Global().Get("WebSocket").New(url)
-	//// Message handler.
-	//msgHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-	//	if ep.onMsgFn != nil {
-	//		// The first argument is the message event
-	//		msgEvt := event.NewMessageEvent(args[0])
-	//		payload := []byte(msgEvt.GetData())
-	//		ep.onMsgFn(payload, msgEvt)
-	//	}
-	//	return nil
-	//})
-	//ep.ws.Set("onmessage", msgHandler)
-	//// A new connection handler.
-	//openHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-	//	if ep.onOpenFn != nil {
-	//		genericEvt := event.FromJsVal(args[0])
-	//		ep.onOpenFn(genericEvt)
-	//	}
-	//	return nil
-	//})
-	//ep.ws.Set("onopen", openHandler)
-	//// Connection closed handler.
-	//closeHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-	//	if ep.onCloseFn != nil {
-	//		closeEvt := event.NewCloseEvent(args[0])
-	//		ep.onCloseFn(closeEvt)
-	//	}
-	//	return nil
-	//})
-	//ep.ws.Set("onclose", closeHandler)
-	//// On error handler.
-	//errHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
-	//	if ep.onErrFn != nil {
-	//		genericEvt := event.FromJsVal(args[0])
-	//		ep.onErrFn(genericEvt)
-	//	}
-	//	return nil
-	//})
-	//ep.ws.Set("onerror", errHandler)
+	ep.ws = js.Global().Get("WebSocket").New(url)
+	// Message handler.
+	msgHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if ep.onMsgFn != nil {
+			// The first argument is the message event
+			msgEvt := event.NewMessageEvent(args[0])
+			payload := []byte(msgEvt.GetData())
+			ep.onMsgFn(payload, msgEvt)
+		}
+		return nil
+	})
+	ep.ws.Set("onmessage", msgHandler)
+	// A new connection handler.
+	openHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if ep.onOpenFn != nil {
+			genericEvt := event.FromJsVal(args[0])
+			ep.onOpenFn(genericEvt)
+		}
+		return nil
+	})
+	ep.ws.Set("onopen", openHandler)
+	// Connection closed handler.
+	closeHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if ep.onCloseFn != nil {
+			closeEvt := event.NewCloseEvent(args[0])
+			ep.onCloseFn(closeEvt)
+		}
+		return nil
+	})
+	ep.ws.Set("onclose", closeHandler)
+	// On error handler.
+	errHandler := js.FuncOf(func(this js.Value, args []js.Value) interface{} {
+		if ep.onErrFn != nil {
+			genericEvt := event.FromJsVal(args[0])
+			ep.onErrFn(genericEvt)
+		}
+		return nil
+	})
+	ep.ws.Set("onerror", errHandler)
 	return ep
 }
 

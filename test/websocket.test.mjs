@@ -1,24 +1,11 @@
 import puppeteer from 'puppeteer-core';
-const chromePath = '/usr/bin/google-chrome';
+import setup from './setup.js';
 
-const options = {
-    executablePath: chromePath,
-    pipe: true,
-    devtools: true,
-    //headless: true
-    // other options...
-};
-
-let browser;
+let globalBrowser;
 
 beforeAll(async () => {
-    browser = await puppeteer.launch(options);
-    const page = await browser.newPage();
-    await page.goto("http://localhost:3000")
-
-
-    //await page.addScriptTag({url: 'assets/wasm_exec.js'})
-    //await page.addScriptTag({url: 'assets/worker.js'})
+    const { browser, page } = await setup({ headless: false });
+    globalBrowser = browser;
     const result = await page.evaluate(async() => {
         //const go = new Go();
         //const wasmModule = new WebAssembly.Module(await fetch('assets/websocket.wasm').then(response => response.arrayBuffer()));
