@@ -10,6 +10,10 @@ import (
 
 func main() {
 	fmt.Print("Hello from Go")
+	pkg.ExportGlobalObject("", map[string]func(){
+		"newEndpoint": func() {
+		},
+	})
 	pkg.ExportGlobalFn("Go_WebSocket", func(args ...js.Value) any {
 		url := args[0].String()
 		args = args[1:]
