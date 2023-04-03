@@ -77,6 +77,6 @@ func ExportGlobalFn(name string, fn z.ExportedFn) {
 	js.Global().Set(name, expFn)
 }
 
-func Runtime() z.Run {
+func Runtime() z.RuntimeInterface {
 	return rtInstance
 }

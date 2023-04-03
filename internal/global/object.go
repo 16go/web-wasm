@@ -8,13 +8,17 @@ import (
 
 var objRef js.Value
 
-type ObjectTyp struct{}
+type Object struct{}
 
 func init() {
 	objRef = js.Global().Get("Object")
 }
 
-func (ObjectTyp) Assign(target z.ObjectTyp, sources ...z.ObjectTyp) js.Value {
-	args := internal.VariadicPrependFirstArg[z.ObjectTyp, z.ObjectTyp](target, sources...)
+func (Object) Assign(target z.JsObject, sources ...z.JsObject) js.Value {
+	args := internal.VariadicPrependFirstArg[z.JsObject, z.JsObject](target, sources...)
 	return objRef.Call("assign", args...).Type()
+}
+
+func (Object) Freeze(target z.JsObject) js.Value {
+	return objRef.Call("freeze", target)
 }

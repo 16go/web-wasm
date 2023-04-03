@@ -17,7 +17,7 @@ import "syscall/js"
 //}
 
 type (
-	ObjectTyp map[string]any
+	JsObject map[string]any
 )
 
 type WrapperArgsValidatorInterface interface {
