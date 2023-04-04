@@ -12,26 +12,35 @@ type runtime struct {
 }
 
 type (
-	ApiDictionary map[string]js.Func
+	ApiMethod     func(...any) any
+	ApiMethodsMap map[string]ApiMethod
 )
 
 type apiInfo struct {
+	majorVer, minorVer int
 }
 
 type api struct {
-	dic  ApiDictionary
-	info apiInfo
+	methods ApiMethodsMap
+	info    apiInfo
 }
 
-func (r *runtime) ExportApi(key string, dic ApiDictionary) {
-	ref := js.Global().Get(key)
+func (r *runtime) NewApi(objKey string, methods ApiMethodsMap) {
+	ref := js.Global().Get(objKey)
 	if !ref.IsNull() || !ref.IsUndefined() {
-		panic(fmt.Sprintf("API export: a global object with the given key '%s' already exists", key))
+		panic(fmt.Sprintf("API export: a global object with the given objKey '%s' already exists", objKey))
 	}
-	api := make(z.JsObject, len(dic))
-	for k, v := range dic {
-		apip[v]
+	apiObj := make(z.JsObject)
+	for k, v := range methods {
+		apiObj[k] = js.FuncOf(func(this js.Value, args []js.Value) any {
+			defer func() {
+				if err := recover(); err != nil {
+
+				}
+			}()
+			//global.Object{}.
+			return nil
+		})
 	}
-	global.Object{}.Freeze(api)
-	js.Global().Set(key, api)
+	js.Global().Set(objKey, global.Object{}.Freeze(apiObj))
 }
