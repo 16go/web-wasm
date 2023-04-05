@@ -6,19 +6,48 @@ import (
 	"syscall/js"
 )
 
-var objRef js.Value
+var objectConstructor js.Value
 
-type Object struct{}
+type Object struct {
+	jsval js.Value
+}
 
 func init() {
-	objRef = js.Global().Get("Object")
+	objectConstructor = js.Global().Get("Object")
 }
 
-func (Object) Assign(target z.JsObject, sources ...z.JsObject) js.Value {
-	args := internal.VariadicPrependFirstArg[z.JsObject, z.JsObject](target, sources...)
-	return objRef.Call("assign", args...).Type()
+func NewObject(args ...any) Object {
+	obj := Object{jsval: objectConstructor.New(args...)}
+	return obj
 }
 
-func (Object) Freeze(target z.JsObject) js.Value {
-	return objRef.Call("freeze", target)
+func (o Object) Value() js.Value {
+	return o.jsval
+}
+
+func (o Object) AddProperty(name string, value any) Object {
+	o.jsval.Set(name, value)
+	return o
+}
+
+func (o Object) AddFunc(name string, callback z.CallbackFn) Object {
+	fn := js.FuncOf(func(this js.Value, args []js.Value) any {
+		allArgs := internal.VariadicPrependFirstArg[js.Value, js.Value](this, args...)
+		callback(allArgs...)
+		return nil
+	})
+	// @todo Release fn
+	o.jsval.Set(name, fn)
+	return o
+}
+
+func (Object) Assign(target js.Value, sources ...js.Value) Object {
+	args := internal.VariadicPrependFirstArg[js.Value, js.Value](target, sources...)
+	newObj := Object{jsval: objectConstructor.Call("assign", args...)}
+	return newObj
+}
+
+func (Object) Freeze(target Object) Object {
+	objectConstructor.Call("freeze", target.Value())
+	return target
 }

@@ -9,7 +9,7 @@ WASM_BUILD_DIR=./web/public/assets
 
 GOBUILD=GOARCH=wasm GOOS=js go build -o
 
-WASM_WS_MODULE:=$(WASM_BUILD_DIR)/websocket.wasm
+WASM_WS_MODULE:=$(WASM_BUILD_DIR)/websocket.wasm pkg/*.go
 $(WASM_WS_MODULE): $(SOURCE_DIR)/websocket/main.go
 	$(GOBUILD) $@ $^
 

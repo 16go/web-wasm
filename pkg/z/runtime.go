@@ -1,8 +1,14 @@
 package z
 
+type CallbackFn func(...any) any
+
 type ApiInfoInterface interface {
-	GoVersion() string
-	Version() string
-	BuildTime() string
-	Name() string
+	GetName() string
+	GetMajorVersion() int
+	GetMinorVersion() int
+}
+
+type ApiInterface interface {
+	Info() ApiInfoInterface
+	NewInstance() any
 }

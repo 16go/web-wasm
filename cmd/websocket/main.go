@@ -1,24 +1,31 @@
 package main
 
 import (
-	"fmt"
 	"github.com/16go/web-wasm/pkg"
-	"github.com/16go/web-wasm/pkg/websocket"
 	"github.com/16go/web-wasm/pkg/z"
 	"syscall/js"
 )
 
+type dummyApi struct {
+}
+
+func (dummyApi) Info() z.ApiInfoInterface {
+	return pkg.ApiInfo{
+		Name:     "Foo",
+		MajorVer: 1,
+		MinorVer: 0,
+	}
+}
+
+func (dummyApi) NewInstance() any {
+	api := new(dummyApi)
+	js.Global().Get("console").Call("log", "mew instance")
+	return api
+}
+
 func main() {
-	fmt.Print("Hello from Go")
-	pkg.ExportGlobalObject("", map[string]func(){
-		"newEndpoint": func() {
-		},
-	})
-	pkg.ExportGlobalFn("Go_WebSocket", func(args ...js.Value) any {
-		url := args[0].String()
-		args = args[1:]
-		dd := args.([]z.OptionInterface)
-		return websocket.NewEndpoint(url, args...)
-	})
+	pkg.Runtime().AddApi(dummyApi{})
+	pkg.Runtime().ExportApi()
+	js.Global().Set("myvar", 2)
 	select {}
 }

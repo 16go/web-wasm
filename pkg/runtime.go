@@ -1,14 +1,17 @@
 package pkg
 
 import (
-	"fmt"
 	"github.com/16go/web-wasm/internal/global"
 	"github.com/16go/web-wasm/pkg/z"
 	"syscall/js"
 )
 
+var (
+	rt *runtime
+)
+
 type runtime struct {
-	//exportedFn []JsWrapper
+	apiList []z.ApiInterface
 }
 
 type (
@@ -16,31 +19,64 @@ type (
 	ApiMethodsMap map[string]ApiMethod
 )
 
-type apiInfo struct {
-	majorVer, minorVer int
+type ApiInfo struct {
+	Name               string
+	MajorVer, MinorVer int
+}
+
+func (inf ApiInfo) GetName() string {
+	return inf.Name
+}
+
+func (inf ApiInfo) GetMajorVersion() int {
+	return inf.MajorVer
+}
+
+func (inf ApiInfo) GetMinorVersion() int {
+	return inf.MinorVer
+}
+
+func (inf ApiInfo) toObject() global.Object {
+	info := global.NewObject()
+	info.AddProperty("Name", inf.Name)
+	info.AddProperty("MajorVer", inf.MajorVer)
+	info.AddProperty("MinorVer", inf.MinorVer)
+	return global.Object{}.Freeze(info)
 }
 
 type api struct {
 	methods ApiMethodsMap
-	info    apiInfo
+	info    ApiInfo
 }
 
-func (r *runtime) NewApi(objKey string, methods ApiMethodsMap) {
-	ref := js.Global().Get(objKey)
-	if !ref.IsNull() || !ref.IsUndefined() {
-		panic(fmt.Sprintf("API export: a global object with the given objKey '%s' already exists", objKey))
-	}
-	apiObj := make(z.JsObject)
-	for k, v := range methods {
-		apiObj[k] = js.FuncOf(func(this js.Value, args []js.Value) any {
-			defer func() {
-				if err := recover(); err != nil {
+func init() {
+	rt = new(runtime)
+	rt.apiList = make([]z.ApiInterface, 0)
+}
 
-				}
-			}()
-			//global.Object{}.
-			return nil
-		})
+func Runtime() *runtime {
+	return rt
+}
+
+func (r *runtime) AddApi(api z.ApiInterface) {
+	r.apiList = append(r.apiList, api)
+}
+
+// ExportApi exports all available APIs to the worker global space.
+func (r *runtime) ExportApi() {
+	l := len(r.apiList)
+	if l == 0 {
+		panic("trying to export an empty API collection")
 	}
-	js.Global().Set(objKey, global.Object{}.Freeze(apiObj))
+	arr := global.NewArray()
+	for _, v := range r.apiList {
+		apiObj := global.NewObject()
+		infoObj := v.Info().(ApiInfo).toObject()
+		apiObj.AddProperty("Info", infoObj.Value())
+		apiObj.AddFunc("newInstance", func(a ...any) any {
+			return v.NewInstance()
+		})
+		arr.Push(apiObj.Value())
+	}
+	js.Global().Set("ApiList", arr.Value())
 }

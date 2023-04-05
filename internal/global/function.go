@@ -1,19 +1,25 @@
 package global
 
 import (
-	"github.com/16go/web-wasm/internal"
 	"syscall/js"
 )
 
-var fnRef js.Value
+var FuncConstructor js.Value
 
-type FunctionTyp struct{}
-
-func init() {
-	fnRef = js.Global().Get("Function")
+type Func struct {
+	js.Value
 }
 
-func (FunctionTyp) Bind(this js.Value, fnArgs ...js.Value) js.Value {
-	args := internal.VariadicPrependFirstArg[js.Value, js.Value](this, fnArgs...)
-	return fnRef.Call("bind", args...)
+func init() {
+	FuncConstructor = js.Global().Get("Function")
+}
+
+func NewFunction(args ...js.Value) Func {
+	fn := Func{FuncConstructor.New(args)}
+	return fn
+}
+
+func (f Func) Bind(this js.Value) Func {
+	f.Call("bind", this)
+	return f
 }
