@@ -1,9 +1,32 @@
 
+// Specify types of the objects that can be transferred by postMessage
+type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array
+  | Float32Array | Float64Array;
 
-enum TransportProtocol {
-  Https = "https",
-  SecureWebsocket = "wss",
-  InsecureWebsocket = "ws"
+/* @ts-ignore */
+type TransferableObjects = ArrayBuffer | MessagePort | ReadableStream | WritableStream | TransformStream | AudioData
+  | ImageBitmap | VideoFrame | OffscreenCanvas | RTCDataChannel;
+
+type TransferablePrimitive = string | null;
+type Transferable = TransferableObjects & TransferablePrimitive;
+
+interface RpcMessageInterface {
+  getPayload(): RpcMessagePayload
+}
+
+type RpcMessagePayload = {
+  [prop: string]: Transferable
+}
+
+type MethodName = string
+type MethodBody = (...args: any) => any
+type MethodSet = {
+  [name: MethodName]: MethodBody
+}
+type MethodRecord = Record<MethodName, MethodBody>
+
+interface SerializableInterface {
+  toString(): string
 }
 
 interface ApiInfoInterface {
@@ -12,16 +35,39 @@ interface ApiInfoInterface {
   minorVer: number
 }
 
-interface ApiInterface {
-  NewChaNel(): void
+interface ChannelOptionsInterface {
+
 }
 
-interface ApiFactoryInterface {
+interface ChannelInterface {
+
+}
+
+class Channel implements ChannelInterface {
+
+}
+
+interface ApiInterface {
+  newChannel(options?: ChannelOptionsInterface): ChannelInterface
+  getMethods(): MethodSet
+}
+
+class Api implements ApiInterface {
+  newChannel(options?: ChannelOptionsInterface): ChannelInterface {
+    return {}
+  }
+
+  getMethods(): MethodSet {
+    return {}
+  }
+}
+
+interface ApiFactoryInterface extends SerializableInterface {
   getInfo(): ApiInfoInterface
   newInstance(...args: any): ApiInterface
 }
 
-class ApiFactory {
+export class ApiFactory {
   private info: ApiInfoInterface
 
   getInfo = (): ApiInfoInterface => {

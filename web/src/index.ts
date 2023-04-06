@@ -1,3 +1,5 @@
-import { Num } from './Num'
+import * as apiImpl from './Api';
 
-export { Num }
+export namespace WasmWeb {
+  export import ApiFactory = apiImpl.ApiFactory;
+}
