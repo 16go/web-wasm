@@ -1,4 +1,4 @@
-package proxy
+package rpc
 
 import "github.com/16go/web-wasm/pkg/z"
 
@@ -7,10 +7,6 @@ type (
 	EventListenerFn func(EventInterface) any
 )
 
-type MessageInterface interface {
-	Payload() []byte
-}
-
 type EventInterface interface {
 	Data() any
 }
@@ -18,22 +14,6 @@ type EventInterface interface {
 //type ChannelOption func(...any) OptionInterface
 
 //tpe ChannelOptionTyp [0]ChannelOption
-
-type ChannelOptionsInterface interface {
-	// Throttle throttles sending of client messages.
-	Throttle(ms int)
-	// Debounce
-	Debounce(ms int)
-	MaxMessageSize(int) z.OptionInterface
-	ReadTimeout(int) z.OptionInterface
-	WriteTimeout(int) z.OptionInterface
-}
-
-type ChannelInterface interface {
-	Send(MessageInterface)
-	OnMessage(EventListenerFn)
-	OnError(EventListenerFn)
-}
 
 type ServiceConstructorInterface interface {
 	New(args ...any) ServiceInterface
@@ -54,7 +34,7 @@ type ServiceInterface interface {
 	Descriptor() ServiceDescriptorInterface
 }
 
-type RemoteProxyInterface interface {
+type ServiceProxyInterface interface {
 	NewServiceInstance(name string) ServiceInterface
-	RegisterService(constructor ServiceConstructorInterface, descriptor ServiceDescriptorInterface)
+	Regis  terService(constructor ServiceConstructorInterface, descriptor ServiceDescriptorInterface)
 }
