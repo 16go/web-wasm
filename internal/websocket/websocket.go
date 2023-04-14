@@ -5,7 +5,7 @@ package websocket
 import (
 	"github.com/16go/web-wasm/internal/event"
 	"github.com/16go/web-wasm/pkg"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"sync/atomic"
 	"syscall/js"
 )
@@ -16,22 +16,22 @@ type endpoint struct {
 	ws            js.Value
 	bytesReceived uint64
 	bytesSent     uint64
-	onMsgFn       z.WS_OnMessageHandlerFn
-	onOpenFn      z.WS_OnOpenHandlerFn
-	onCloseFn     z.WS_OnCloseHandlerFn
-	onErrFn       z.WS_OnErrorHandlerFn
+	onMsgFn       web.WS_OnMessageHandlerFn
+	onOpenFn      web.WS_OnOpenHandlerFn
+	onCloseFn     web.WS_OnCloseHandlerFn
+	onErrFn       web.WS_OnErrorHandlerFn
 	isClosed      bool
 }
 
 type Option func(ep *endpoint)
 
-func WithOnMessageHandler(h z.WS_OnMessageHandlerFn) z.OptionInterface {
+func WithOnMessageHandler(h web.WS_OnMessageHandlerFn) web.OptionInterface {
 	return func(ep any) {
 		ep.(*endpoint).onMsgFn = h
 	}
 }
 
-func WithOnOpenHandler(h z.WS_OnOpenHandlerFn) z.OptionInterface {
+func WithOnOpenHandler(h web.WS_OnOpenHandlerFn) web.OptionInterface {
 	return func(ep any) {
 		ep.(*endpoint).onOpenFn = h
 	}
@@ -40,7 +40,7 @@ func WithOnOpenHandler(h z.WS_OnOpenHandlerFn) z.OptionInterface {
 // NewEndpoint creates a new WebSocket instance.
 // Throws DOMException if provided endpoint URL is not valid.
 // See https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/WebSocket for the details.
-func (WebSocketApi) NewEndpoint(url string, opts ...z.OptionInterface) z.WebSocketEndpointInterface {
+func (WebSocketApi) NewEndpoint(url string, opts ...web.OptionInterface) web.WebSocketEndpointInterface {
 	ep := new(endpoint)
 	// Assign options
 	for _, opt := range opts {

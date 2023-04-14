@@ -1,4 +1,4 @@
-package z
+package web
 
 type (
 	WS_OnOpenHandlerFn    func(EventInterface)

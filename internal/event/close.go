@@ -1,7 +1,7 @@
 package event
 
 import (
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"syscall/js"
 )
 
@@ -14,7 +14,7 @@ const (
 )
 
 type closeEvent struct {
-	z.EventInterface
+	web.EventInterface
 }
 
 func NewCloseEvent(jv js.Value) closeEvent {

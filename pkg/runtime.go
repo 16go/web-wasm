@@ -2,7 +2,7 @@ package pkg
 
 import (
 	"github.com/16go/web-wasm/internal/global"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"syscall/js"
 )
 
@@ -11,7 +11,7 @@ var (
 )
 
 type runtime struct {
-	apiList []z.ApiInterface
+	apiList []web.ApiInterface
 }
 
 type (
@@ -51,14 +51,14 @@ type api struct {
 
 func init() {
 	rt = new(runtime)
-	rt.apiList = make([]z.ApiInterface, 0)
+	rt.apiList = make([]web.ApiInterface, 0)
 }
 
 func Runtime() *runtime {
 	return rt
 }
 
-func (r *runtime) AddApi(api z.ApiInterface) {
+func (r *runtime) AddApi(api web.ApiInterface) {
 	r.apiList = append(r.apiList, api)
 }
 

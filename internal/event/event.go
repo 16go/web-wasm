@@ -3,7 +3,7 @@ package event
 import (
 	"github.com/16go/web-wasm/internal"
 	"github.com/16go/web-wasm/pkg"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"syscall/js"
 )
 
@@ -39,7 +39,7 @@ func NewEvent(name string, opts ...Option) event {
 	return evt
 }
 
-func FromJsVal(e js.Value) z.EventInterface {
+func FromJsVal(e js.Value) web.EventInterface {
 	evt := event{}
 	evt.jsval = e
 	return evt

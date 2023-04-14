@@ -1,4 +1,4 @@
-package z
+package web
 
 import "syscall/js"
 

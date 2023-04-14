@@ -1,4 +1,4 @@
-package z
+package web
 
 type CallbackFn func(...any) any
 

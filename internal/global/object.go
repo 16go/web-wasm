@@ -2,7 +2,7 @@ package global
 
 import (
 	"github.com/16go/web-wasm/internal"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"syscall/js"
 )
 
@@ -30,7 +30,7 @@ func (o Object) AddProperty(name string, value any) Object {
 	return o
 }
 
-func (o Object) AddFunc(name string, callback z.CallbackFn) Object {
+func (o Object) AddFunc(name string, callback web.CallbackFn) Object {
 	fn := js.FuncOf(func(this js.Value, args []js.Value) any {
 		allArgs := internal.VariadicPrependFirstArg[js.Value, js.Value](this, args...)
 		callback(allArgs...)

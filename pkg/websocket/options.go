@@ -2,13 +2,13 @@ package websocket
 
 import (
 	"github.com/16go/web-wasm/internal/websocket"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 )
 
-func WithOnMessageHandler(h z.WS_OnMessageHandlerFn) z.OptionInterface {
+func WithOnMessageHandler(h web.WS_OnMessageHandlerFn) web.OptionInterface {
 	return websocket.WithOnMessageHandler(h)
 }
 
-func WithOnOpenHandler(h z.WS_OnOpenHandlerFn) z.OptionInterface {
+func WithOnOpenHandler(h web.WS_OnOpenHandlerFn) web.OptionInterface {
 	return websocket.WithOnOpenHandler(h)
 }

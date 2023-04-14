@@ -1,6 +1,4 @@
-package rpc
-
-import "github.com/16go/web-wasm/pkg/z"
+package z
 
 type (
 	Handle          uintptr

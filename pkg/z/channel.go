@@ -1,15 +1,17 @@
-package rpc
+package z
 
-import "github.com/16go/web-wasm/pkg/z"
+import (
+	"github.com/16go/web-wasm/pkg/z/web"
+)
 
 type ChannelOptionsInterface interface {
 	// Throttle throttles sending of client messages.
 	Throttle(ms int)
 	// Debounce
 	Debounce(ms int)
-	MaxMessageSize(int) z.OptionInterface
-	ReadTimeout(int) z.OptionInterface
-	WriteTimeout(int) z.OptionInterface
+	MaxMessageSize(int) web.OptionInterface
+	ReadTimeout(int) web.OptionInterface
+	WriteTimeout(int) web.OptionInterface
 }
 
 type ChannelInterface interface {

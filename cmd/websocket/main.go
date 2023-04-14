@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/16go/web-wasm/pkg"
-	"github.com/16go/web-wasm/pkg/z"
+	"github.com/16go/web-wasm/pkg/z/web"
 	"syscall/js"
 )
 
 type dummyApi struct {
 }
 
-func (dummyApi) Info() z.ApiInfoInterface {
+func (dummyApi) Info() web.ApiInfoInterface {
 	return pkg.ApiInfo{
 		Name:     "Foo",
 		MajorVer: 1,
