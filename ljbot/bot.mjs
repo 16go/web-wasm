@@ -63,7 +63,7 @@ async function newBrowserPage({headless = true}) {
 
 async function loadPage(page, pageUrl) {
     console.log('Loading page %s', pageUrl)
-    return await page.goto(pageUrl);
+    return await page.goto(pageUrl, {timeout: 0});
 }
 
 // Fetch new temporarily email
@@ -227,6 +227,23 @@ class CommentAction {
         await this.page.mouse.click(x - 70, y - 50);
 
         await sleep(2500);
+    }
+
+    async Reply(message, delay = 2000) {
+        await this.page.evaluate(async (commentId, message) => {
+            const selector = `#ljcmt${commentId} .comment-menu__list a`;
+            const links = document.querySelectorAll(selector);
+            if (!links.length) {
+                throw new Error(`selector: ${selector}`);
+            }
+            links[0].click();
+        }, this.commentId);
+        await this.page.focus('.textbox-commenttext');
+        await sleep(50);
+        await this.page.keyboard.type(message);
+        await sleep(50);
+        await this.page.click('#submitpost');
+        await sleep(delay);
     }
 }
 
