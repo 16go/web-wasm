@@ -307,6 +307,22 @@ class LjSession {
         return this.blacklist;
     }
 
+    randomMoronComment(comments) {
+        const results = [];
+        for (let i = 0; i < comments.length; i++) {
+            let { username, profileUsername } = comments[i];
+            const bl = this.getBlackList();
+            let found = bl.find(el => {
+                return el === username || el === profileUsername;
+            })
+            if (found) {
+                results.push(comments[i])
+            }
+        }
+
+        return results[Math.floor(results.length * Math.random())]
+    }
+
     async expandComments(page, limit = -1) {
         let nExpanded = 0;
         do {
@@ -371,34 +387,22 @@ class LjSession {
         return results;
     }
 
-    async replyWithNastyMessages(targetUrl) {
-        const comments = await this.readComments(targetUrl);
-        const pageContent = await this.page.content();
-        const now = Date.now();
-        const htmlPageFilename = `/tmp/page_${now}.html`;
-        // Save page content to reload the page each time after we added a new reply.
-        fs.writeFile(htmlPageFilename, pageContent, function (err) {
-            if (err) {
-                throw err;
+    async replyWithNastyMessages(targetUrl, limit = 8) {
+        let nReplied = 0;
+        while (nReplied < limit) {
+            const comments = await this.readComments(targetUrl);
+            const comment = this.randomMoronComment(comments);
+            if (!comment) {
+                return
             }
-        });
-        for (let i = 0; i < comments.length; i++) {
-            let { username, text, commentId, profileUsername } = comments[i];
-            const bl = this.getBlackList();
-            let found = bl.find(el => {
-                return el === username || el === profileUsername;
-            })
-            if (found) {
-                console.log('Moron detected: username="%s", comment #%d, text="%s"', username, commentId, text);
-                const nastyMsg = getRandomNastyMessage()
-                console.log('\twhack the moron with the nasty message "%s"', nastyMsg);
-                let action = new CommentAction(this.getPage(), commentId);
-                await action.Reply(nastyMsg);
-                // Reload page
-                console.log(`reloading page from: ${htmlPageFilename}`);
-                //await this.page.goto('file://'+htmlPageFilename, {timeout: 0});
-                console.log('');
-            }
+            const { username, commentId, text } = comment;
+            console.log('Moron detected: username="%s", comment #%d, text="%s"', username, commentId, text);
+            const nastyMsg = getRandomNastyMessage()
+            console.log('\twhack the moron with the nasty message "%s"', nastyMsg);
+            let action = new CommentAction(this.getPage(), commentId);
+            await action.Reply(nastyMsg);
+            console.log('');
+            nReplied++;
         }
     }
 }

@@ -3,7 +3,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const DEFAULT_PASS = '';
 //const ACCOUNT_EMAIL = 'rohecew349@anwarb.com';
-const ACCOUNT_EMAIL = 'byxoqulo@mailo.icu';
+const ACCOUNT_EMAIL = 'dilili6893@aaorsi.com';
 const CREATE_ACCOUNT = 'https://www.livejournal.com/create';
 const ADMIN_BAN_SET = 'https://www.livejournal.com/admin/console/';
 
