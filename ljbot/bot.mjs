@@ -1,5 +1,7 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import {getRandomNastyMessage} from "./helpers.mjs";
+import fs from 'fs';
 
 const DEFAULT_PASS = '';
 const LJ_URL = 'https://www.livejournal.com/';
@@ -334,8 +336,10 @@ class LjSession {
     }
 
     async readComments(targetUrl) {
+        console.log('');
         await loadPage(this.page, targetUrl + '#comments');
         await sleep(100);
+        console.log('Extract comments from the current page');
 
         await this.expandComments(this.page);
         const resultsJson = await this.page.evaluate(()=> {
@@ -360,7 +364,42 @@ class LjSession {
             return JSON.stringify(results);
         });
 
-        return JSON.parse(resultsJson);
+        const results = JSON.parse(resultsJson);
+        console.log('%d comments have been extracted', results.length);
+        console.log('');
+
+        return results;
+    }
+
+    async replyWithNastyMessages(targetUrl) {
+        const comments = await this.readComments(targetUrl);
+        const pageContent = await this.page.content();
+        const now = Date.now();
+        const htmlPageFilename = `/tmp/page_${now}.html`;
+        // Save page content to reload the page each time after we added a new reply.
+        fs.writeFile(htmlPageFilename, pageContent, function (err) {
+            if (err) {
+                throw err;
+            }
+        });
+        for (let i = 0; i < comments.length; i++) {
+            let { username, text, commentId, profileUsername } = comments[i];
+            const bl = this.getBlackList();
+            let found = bl.find(el => {
+                return el === username || el === profileUsername;
+            })
+            if (found) {
+                console.log('Moron detected: username="%s", comment #%d, text="%s"', username, commentId, text);
+                const nastyMsg = getRandomNastyMessage()
+                console.log('\twhack the moron with the nasty message "%s"', nastyMsg);
+                let action = new CommentAction(this.getPage(), commentId);
+                await action.Reply(nastyMsg);
+                // Reload page
+                console.log(`reloading page from: ${htmlPageFilename}`);
+                //await this.page.goto('file://'+htmlPageFilename, {timeout: 0});
+                console.log('');
+            }
+        }
     }
 }
 
